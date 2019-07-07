@@ -1,12 +1,12 @@
 #!ipxe
 
 #beginning of file incase of failure
-:start 
+:start
 
 # Some constants I didn't need right away but may be helpful if you have long addresses or directories to keep track of.
 
-set boot-url http://10.0.0.1  #Example http://10.0.0.1  No trailing slashes.
-set nfs-server 10.0.0.1  #Example just the raw IP of the NFS server no slashes
+set boot-url ${root}/ipxe/bradgillap #${ro}Example http://10.0.0.1  No trailing slashes.
+set nfs-server ${server}  #Example just the raw IP of the NFS server no slashes
 set nfs-root /srv/tftp/nfs  #Example the raw path to the NFS server in linux. NO trailing slash.
 set image-dir images # Cut down on the hardlinking of directories. Example /boot/images NO trailing slashes.
 set boot-image boot.png  #set your background boot image if you have console vesafb and png turned on. Exmaple: Boot image should go in http://yourwhatever.com/boot.png
@@ -79,19 +79,19 @@ menu IPXE SUPERBOOT UPDATED ${master-version}
   item --key d trinity      (D)  Trinity Rescue ${trinity-version}
   item --key e hirens       (E)  Hiren's Boot ${hirens-version} 600+ MB ISO
   item --key f clonezilla   (F)  Clonezilla ${arch} ${clonezilla-version} HTTP
-  item --key g gparted      (G)  Gparted ${arch} ${gparted-version} HTTP 
+  item --key g gparted      (G)  Gparted ${arch} ${gparted-version} HTTP
   item --key h redobackup   (H)  RedoBackup! ${redobackup-version} NFS
   item --key i acronis      (I)  Acronis ${acronis-version} 350+ MB ISO
   item --key j deblive64    (J)  Debian Live ONLY X64 ${deblive64-version} Wheezy HTTP
   item --key k ophcrackxp   (K)  Ophcrack Live XP ${ophcrackxp-version} 400+ MB ISO
   item --key l ophcrackvista   (L)  Ophcrack Live Vista ${ophcrackvista-version} 400+ MB ISO
   item --gap --             ------------------------- Tools and utilities -------------------------------------------------------------------------------
-  item --key m memtestx86   (M)  Memtestx86 ${memtestx86-version} ISO 
+  item --key m memtestx86   (M)  Memtestx86 ${memtestx86-version} ISO
   item --key n hdat         (N)  Hdat ${hdat-version} Hard Drive Diagnostics IMG
   item --key o spinrite     (O)  SpinRite ${spinrite-version} HD Repair IMG
   item --key p dban         (P)  Dban ${dban-version} Wipe Warning! DESTRUCTIVE! IMG
   item --key q ntpassword   (Q)  Offline NT Password and Registry Editor ${ntpassword-version} WARNING! EFS ENCRYPTION! ISO
-  item --key v konboot 		(V)  Kon-boot ${konboot-version} 
+  item --key v konboot 		(V)  Kon-boot ${konboot-version}
   item --gap --             ------------------------- Advanced options -----------------------------------------------------------------------------------
   item --key z config       (Z)  Configure settings
   item --key t external     (T)  External Linux Installs http://boot.salstar.sk/
@@ -113,7 +113,7 @@ goto ${selected}
 :shell
   echo Type 'exit' to get the back to the menu.
   echo Type 'help' for more IPXE commands.
-  echo 
+  echo
   echo INTERFACE,IP,SUBNET,GATEWAY
   echo .......................................
   echo
@@ -146,16 +146,16 @@ goto ${selected}
   clear submenu-default
   goto start
 
-# This forces the document to do the opposite architecture from the menu down. 
+# This forces the document to do the opposite architecture from the menu down.
 :changearch
   cpuid --ext 29 && set arch x86 || set arch x64
   goto menu
 ################### END OF BUILT IN COMMMANDS ###########################
 
-####### BEGIN SYSTEM INFO ######### 
+####### BEGIN SYSTEM INFO #########
 
 :hdt
-  initrd ${image-dir}/hdt-0.5.2.img 
+  initrd ${image-dir}/hdt-0.5.2.img
   chain memdisk || goto failed
 
 :astra
@@ -204,7 +204,7 @@ goto start
 ##################### BEGIN Operating Systems Install ####################
 
 :freedos
-  initrd ${image-dir}/freedosv1.img 
+  initrd ${image-dir}/freedosv1.img
   chain memdisk || goto failed
 
 # Special set base-url constant for remote host
@@ -236,12 +236,12 @@ goto start
   initrd /winpe7/${arch}/winpe.wim         boot.wim
   boot || goto failed
 
-################ END Operating Systems Install ########################### 
+################ END Operating Systems Install ###########################
 
 ################ BEGIN Live Boot Environments ###########################
 
 :hirens
-  initrd ${image-dir}/Hiren's.BootCD.15.2.iso 
+  initrd ${image-dir}/Hiren's.BootCD.15.2.iso
   chain memdisk iso raw || goto failed
 
 :clonezilla
@@ -250,8 +250,8 @@ goto start
   boot || goto failed
 
 :gparted
-  kernel ${image-dir}/gparted/${arch}/vmlinuz boot=live config union=aufs noswap noprompt vga=788 fetch=${boot-url}/${image-dir}/gparted/${arch}/filesystem.squashfs 
-  initrd ${image-dir}/gparted/${arch}/initrd.img 
+  kernel ${image-dir}/gparted/${arch}/vmlinuz boot=live config union=aufs noswap noprompt vga=788 fetch=${boot-url}/${image-dir}/gparted/${arch}/filesystem.squashfs
+  initrd ${image-dir}/gparted/${arch}/initrd.img
   boot || goto failed
 
 :redobackup
@@ -260,7 +260,7 @@ goto start
   boot || goto failed
 
 :acronis
-  initrd ${image-dir}/acronis2014.iso 
+  initrd ${image-dir}/acronis2014.iso
   chain memdisk iso raw || goto failed
 
 :trinity
@@ -283,15 +283,15 @@ goto start
   chain memdisk iso raw || goto failed
 
 :ophcrackvista
-  initrd ${image-dir}/ophcrack-vista-livecd-3.6.0.iso 
+  initrd ${image-dir}/ophcrack-vista-livecd-3.6.0.iso
   chain memdisk iso raw || goto failed
 
-#vmalloc=512 is the ISO + 50mb or so to give it room to breathe in ram. 
+#vmalloc=512 is the ISO + 50mb or so to give it room to breathe in ram.
 :pmagic
-  initrd ${image-dir}/pmagic_2014_02_26.iso 
+  initrd ${image-dir}/pmagic_2014_02_26.iso
   chain memdisk iso vmalloc=512M || goto failed
 
-# x86 version of this has some weird double initd1 and initrd2 that I couldn't figure out. 
+# x86 version of this has some weird double initd1 and initrd2 that I couldn't figure out.
 :deblive64
   kernel ${image-dir}/debian/live/debian-live-7.4-amd64-gnome-desktop+nonfree.vmlinuz
   initrd ${image-dir}/debian/live/debian-live-7.4-amd64-gnome-desktop+nonfree.initrd.img
@@ -306,7 +306,7 @@ goto start
   chain memdisk || goto failed
 
 :spinrite
-  initrd ${image-dir}/spinritev6.iso 
+  initrd ${image-dir}/spinritev6.iso
   chain memdisk iso raw || goto failed
 
 :memtestx86
@@ -314,7 +314,7 @@ goto start
   chain memdisk iso raw || goto failed
 
 :ntpassword
-  initrd ${image-dir}/cd140201.iso 
+  initrd ${image-dir}/cd140201.iso
   chain memdisk iso || goto failed
 
 :konboot
@@ -323,20 +323,20 @@ goto start
 
 # quick explanation of imgargs. We don't need to put the path to DBA.BZI because we just downloaded to a root path.
 :dban
-  kernel ${image-dir}/DBAN.BZI 
-  imgargs DBAN.BZI nuke="dwipe --method gutmann --rounds 2 --verify last" silent vga=785 
+  kernel ${image-dir}/DBAN.BZI
+  imgargs DBAN.BZI nuke="dwipe --method gutmann --rounds 2 --verify last" silent vga=785
   boot || goto failed
 
 # This was just a test for boot.wim. We use winpe instead with injected drivers for lan and disks
 #:wimboot
   #kernel wimboot
-  #initrd win7/bootmgr          bootmgr 
-  #initrd win7/boot/bcd         BCD 
-  #initrd win7/boot/boot.sdi    boot.sdi 
-  #initrd win7/sources/boot.wim boot.wim 
+  #initrd win7/bootmgr          bootmgr
+  #initrd win7/boot/bcd         BCD
+  #initrd win7/boot/boot.sdi    boot.sdi
+  #initrd win7/sources/boot.wim boot.wim
   #imgstat
   #boot || goto failed
 
 :external
   chain http://boot.salstar.sk || goto failed
-  goto start 
+  goto start
